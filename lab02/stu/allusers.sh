@@ -1,14 +1,13 @@
 #!/usr/bin/bash
 
 readarray -t users < <(cat /etc/passwd | cut -d: -f5 | tr -d ',')
-declare -p users
 
 for i in ${!users[@]}
 do
 
-  if [[ -n "${user[$i]}" ]]
+  if [[ -n "${users[$i]}" ]]
   then
-    echo ${user[$i]}
+    echo ${users[$i]}
   fi
 
 done
