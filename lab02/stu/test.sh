@@ -77,24 +77,24 @@ function test_task2(){
 
     echo "--- TEST TASK 2 ---"
     
-    cmd="./getname.sh adina"
+    cmd="./getname.sh lightdm"
     res=$(eval $cmd)
-    expect=$(grep "^adina:" /etc/passwd | cut -d ":" -f 5)
+    expect=$(grep "^lightdm:" /etc/passwd | cut -d ":" -f 5)
     utest "$res" "$expect" "($cmd)"
 
-    cmd="./getname.sh bilzor"
+    cmd="./getname.sh nvidia-persistenced"
     res=$(eval $cmd)
-    expect=$(grep "^bilzor:" /etc/passwd | cut -d ":" -f 5)
+    expect=$(grep "^nvidia-persistenced:" /etc/passwd | cut -d ":" -f 5)
     utest "$res" "$expect" "($cmd)"
 
-    cmd="./getname.sh wcbrown"
+    cmd="./getname.sh speech-dispatcher"
     res=$(eval $cmd)
-    expect=$(grep "^wcbrown:" /etc/passwd | cut -d ":" -f 5)
+    expect=$(grep "^speech-dispatcher:" /etc/passwd | cut -d ":" -f 5)
     utest "$res" "$expect" "($cmd)"
 
-    cmd="./getname.sh roche"
+    cmd="./getname.sh rtkit"
     res=$(eval $cmd)
-    expect=$(grep "^roche:" /etc/passwd | cut -d ":" -f 5)
+    expect=$(grep "^rtkit:" /etc/passwd | cut -d ":" -f 5)
     utest "$res" "$expect" "($cmd)"
 
     echo
@@ -312,4 +312,3 @@ test_task3
 test_task4
 test_task5
 test_task6
-
