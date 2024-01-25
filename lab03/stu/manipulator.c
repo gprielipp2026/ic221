@@ -36,18 +36,17 @@ int main(int argc, char *argv[]){
   int choice;   //store the user choice for operations
   int i;        //an interator for loops
 
-
   srandom(1992);//seed random number generator
 
   printf("Enter the length:\n");
 
   //TODO PART 1: Requst how many numbers
   // hint: don't forget to return 1 on error
-
-
-
-
-
+  if( !scanf("%d", &len) )
+  {
+    fprintf(stderr, "Error, not a number\n");
+    exit(1);
+  }
 
   int array[len]; //declare array now that we know its size
 
@@ -56,8 +55,19 @@ int main(int argc, char *argv[]){
 
   //TODO PART 1: Read in desired numbers
   // hint: don't forget to return 1 on error
-
-
+  for(i = 0; i < len; i++)
+  {
+    if ( scanf("%d", &res) )
+    { // if it reads something
+      array[i] = res;
+    }
+    else
+    {
+      fprintf(stderr, "Error, not a number\n");
+      exit(1);
+    }
+  }
+  
 
 
 
