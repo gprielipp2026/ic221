@@ -10,7 +10,7 @@ void print_array(int len, int* array){
   {
     printf("%d ", array[i]);
   }
-  printf("}\n");
+  printf("} \n");
 }
 
 //TODO PART 3: compete the reverse_array function
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]){
   // hint: don't forget to return 1 on error
   if( !scanf("%d", &len) )
   {
-    fprintf(stderr, "ERROR: Invalid input\n");
+    fprintf(stdout, "ERROR: Invalid input\n");
     exit(1);
   }
 
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]){
     }
     else
     {
-      fprintf(stderr, "ERROR: Invalid input\n");
+      fprintf(stdout, "ERROR: Invalid input\n");
       exit(1);
     }
   }
@@ -145,14 +145,17 @@ int main(int argc, char *argv[]){
     else if (choice == 2)
     {
       reverse_array(len, array);
+      print_array(len, array);
     }
     else if (choice == 3)
     {
       randomize_array(len, array);
+      print_array(len, array);
     }
     else if (choice == 4)
     {
       sort_array(len, array);
+      print_array(len, array);
     }
     else{
       printf("ERROR: Invalid number. Choose again.\n\n");
