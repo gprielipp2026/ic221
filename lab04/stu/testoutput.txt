@@ -1,0 +1,28 @@
+
+--- TEST part1 ---
+[0;32m pass [0m		 Compiles without warnings or errors (gcc -Wall -g palindrome.c -o palindrome 2>&1)
+[0;32m pass [0m		 Test madamimadam (echo "madamimadam" | ./palindrome  | tr "\n" " ")
+[0;32m pass [0m		 Test amanaplanacanalpanama (echo "amanaplanacanalpanama" | ./palindrome  | tr "\n" " ")
+[0;32m pass [0m		 Test notapalidrome (echo "natapalindrome" | ./palindrome  | tr "\n" " ")
+
+--- TEST part2 ---
+[0;32m pass [0m		 Compiles without warnings or errors (gcc -Wall -g check.c -o check 2>&1)
+[0;31m FAIL [0m		 Test valid credit card number (./check 6474562389972756)
+[0;31m FAIL [0m		 Test valid return value is 0 (./check 6474562389972756 >/dev/null; echo $?)
+[0;32m pass [0m		 Test invalid return value is 2 (./check 6474562389972757 >/dev/null; echo $?)
+[0;32m pass [0m		 Test error no arguments (./check 2>&1)
+[0;32m pass [0m		 Test error no arguments to stderr (./check >/dev/null 2>.tmp;cat .tmp)
+[0;32m pass [0m		 Test error bad argument return value is 1 (./check >/dev/null 2>&1 ; echo $?)
+[0;32m pass [0m		 Test error bad length (./check 123452 2>&1)
+[0;32m pass [0m		 Test error bad length to stderr (./check 123452 >/dev/null 2>.tmp;cat .tmp)
+[0;32m pass [0m		 Test error bad length return value is 1 (./check 12345 >/dev/null 2>&1; echo $?)
+[0;31m FAIL [0m		 Test error invalid number (1) (./check 12345a7890123456 2>&1)
+[0;31m FAIL [0m		 Test error invalid number (2) (./check 123456789b123456 2>&1)
+[0;31m FAIL [0m		 Test error invalid number to stderr (2) (./check 123456789b123456 >/dev/null 2>.tmp;cat .tmp)
+[0;31m FAIL [0m		 Test error invalid number return value is 1 (./check 123456789b123456 >/dev/null 2>&1; echo $?)
+
+Extra Credit Tests
+[0;31m FAIL [0m		 Random credit card 1 and card 2 not the same ( [ "$card1" -eq "$card2" ] ; echo $? ) (2)
+[0;31m FAIL [0m		 Random credit card 1 passes (./check $card1)
+[0;31m FAIL [0m		 Random credit card 2 passes (./check $card2)
+
