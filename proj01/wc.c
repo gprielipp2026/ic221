@@ -177,7 +177,7 @@ int validate(char* str)
   // could I open it?
   if(fd == NULL)
   { // no
-    fprintf(stderr, "ERROR: file %s cannot be opened\n", str);
+    fprintf(stderr, "ERROR: file \'%s\' cannot be opened\n", str);
     return 0;
   }
   
