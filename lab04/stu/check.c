@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int check(int* cardNumberDigits);
+int check(int* digits);
 int read(char* str, int* num);
 
 int main(int argc, char * argv[]){
@@ -15,20 +15,23 @@ int main(int argc, char * argv[]){
   if(argc != 2)
   {
     fprintf(stderr, "ERROR: require credit card number\n");
-    exit(1);
+    return 1;
   }
  
-  int* cardNumberDigits;
-  if(read(argv[1], cardNumberDigits) == 0)
+  int* cardNumberDigits = malloc(sizeof(int)*16);
+  char ec;
+  if((ec = read(argv[1], cardNumberDigits)) != 1)
   {
-    fprintf(stderr, "ERROR: Invalid credit card number: Bad number '%s'\n", argv[1]);
-    exit(1);
+    free(cardNumberDigits);
+    fprintf(stderr, "ERROR: Invalid credit card number: Bad number '%c'\n", ec);
+    return 1;
   } 
-  
+ 
   if(strlen(argv[1]) != 16)
   {
+    free(cardNumberDigits);
     fprintf(stderr, "ERROR: Invalid credit card number: Bad Length\n");
-    exit(1);
+    return 1;
   }
 
   // OUTPUT strinsg for you to use to pass automated tests
@@ -55,10 +58,10 @@ int main(int argc, char * argv[]){
   return 0;
 }
 
-int check(int* cardNumberDigits)
+int check(int* digits)
 {
-  int* digits = malloc(sizeof(int)*16);
-  memcpy(digits, cardNumberDigits, 16);
+  //int* digits = malloc(sizeof(int)*16);
+  //memcpy(digits, cardNumberDigits, 16);
   /*for(int i = 0; i < 16; i++)*/
   /*{*/
   /*digits[i] = cardNumberDigits[i];*/
@@ -75,9 +78,10 @@ int check(int* cardNumberDigits)
   {
     if(digits[i] > 9)
     {
-      int r = digits[i] % 10;
-      int l = (digits[i]/10) % 10;
-      digits[i] = l + r;
+      //int r = digits[i] % 10;
+      //int l = (digits[i]/10) % 10;
+      //digits[i] = l + r;
+      digits[i] -= 9;
     }
   }
 
@@ -88,8 +92,6 @@ int check(int* cardNumberDigits)
     sum += digits[i];
   }
 
-  free(digits);
-
   return (sum % 10) == 0;
 }
 
@@ -97,15 +99,14 @@ int read(char* str, int* num)
 {
   // return 0 if I fail to parse the number
   int len = strlen(str);
-  num = malloc(sizeof(int)*len);
+  
   for(int i = 0; i < len; i++)
   {
     if(!(str[i] >= '0' && str[i] <= '9'))
     {
-      free(num);
-      return 0;
+      return str[i];
     }
-    num[len-i-1] = str[i] - '0';
+    num[i] = str[i] - '0';
   }    
   // return 1 if I succeed
   
