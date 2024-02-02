@@ -1,0 +1,17 @@
+./wc dickens.txt,dickens.txt 19199 161007 917028
+./wc A.txt,A.txt 1 3960 201961
+./wc random.txt,random.txt 69765 295983 6795742
+./wc dickens.txt A.txt,dickens.txt 19199 161007 917028 A.txt 1 3960 201961 total 19200 164967 1118989
+cat dickens.txt | ./wc,-stdin- 19199 161007 917028
+cat dickens.txt | ./wc A.txt + A.txt,A.txt 1 3960 201961 -stdin- 19199 161007 917028 A.txt 1 3960 201961 total 19201 168927 1320950
+cat dickens.txt | ./wc -l A.txt + A.txt,A.txt 1 -stdin- 19199  A.txt 1  total 19201
+cat dickens.txt | ./wc -w A.txt + A.txt,A.txt 3960 -stdin- 161007 A.txt 3960 total 168927
+cat dickens.txt | ./wc -c A.txt + A.txt,A.txt 201961 -stdin- 917028 A.txt 201961 total 1320950
+cat dickens.txt | ./wc -c -l A.txt + A.txt,A.txt 1 201961 -stdin- 19199 917028 A.txt 1 201961 total 19201 1320950
+./wc doesnotexist.txt,ERROR: file 'doesnotexist.txt' cannot be opened
+./wc doesnotexist.txt 2> /dev/null,
+./wc dickens.txt doesnotexist.txt dickens.txt,dickens.txt 19199 161007 917028 ERROR: file 'doesnotexist.txt' cannot be opened dickens.txt 19199 161007 917028 total 38398 322014 1834056
+./wc dickens.txt doesnotexist.txt dickens.txt 2>/dev/null,dickens.txt 19199 161007 917028 dickens.txt 19199 161007 917028 total 38398 322014 1834056
+./wc -p dickens.txt,ERROR: unknown option '-p'
+./wc -p -l dickens.txt,ERROR: unknown option '-p'
+./wc -l -p dickens.txt,ERROR: unknown option '-p'

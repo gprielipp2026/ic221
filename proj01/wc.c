@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 typedef union {
   unsigned int options : 4;
   struct {
-    unsigned int none    : 1; // no arguments given at all 
-    unsigned int chars   : 1; // output the #chars 
-    unsigned int words   : 1; // output the #words
-    unsigned int lines   : 1; // output the #lines 
+    unsigned int none  : 1; // no arguments given at all 
+    unsigned int chars : 1; // output the #chars 
+    unsigned int words : 1; // output the #words
+    unsigned int lines : 1; // output the #lines 
   };
 } opts_t;
 
@@ -31,7 +32,7 @@ wc_t* wc_create(char* fn, opts_t* opts);
 // fill out the wc_t struct from the given file fields should already be at 0
 // open the file to read, then close it when done
 // report any errors straight to stderr
-void wc_read(wc_t* count);
+void wc_read(wc_t* wc);
 
 // output in the form:
 // <fn> <?lines> <?words> <?chars>
@@ -51,17 +52,30 @@ wc_t** wc_gen_from_args(int argc, char* argv[], opts_t* opts, int* num_wcs);
 
 int main(int argc, char* argv[])
 {
+  // get the wc_s to iterate through
   opts_t opts;
-  opts.options = 0;
+  int num_wcs = 0;
+  wc_t** wcs = wc_gen_from_args(argc, argv, &opts, &num_wcs);
 
-  opts.chars = 1;
-  opts.lines = 1;
+  // read each wc
+  for(int i = 0; i < num_wcs; i++)
+  {
+    wc_read(wcs[i]);
+    
+    // print it out to the screen
+    wc_output(wcs[i]);
+    
+  }
 
-  printf("%d\n", opts.options);
+  
+  // if multiple, put the total
+  if(num_wcs > 1)
+  {
+    wc_output_total(wcs, num_wcs);
+  }
 
-  wc_t* wc = wc_create("test", &opts);
-
-  free(wc);
+  // free memory
+  wc_free(wcs, num_wcs);
 
   return 0;
 }
@@ -73,10 +87,15 @@ int main(int argc, char* argv[])
 // so don't free it with every wc_t
 void wc_free(wc_t** wcs, int num_wcs)
 {
-  free(wcs[0]->opts);
-  for(int i = 0; i < num_wcs; i++)
-    free(wcs[i]);
+  if(num_wcs > 0)
+  {
+    free(wcs[0]->opts);
+    for(int i = 0; i < num_wcs; i++)
+      free(wcs[i]);
+  }
+  free(wcs);
 }
+  
 
 // take a filename and opts_t* and create a wc_t
 wc_t* wc_create(char* fn, opts_t* opts)
@@ -94,16 +113,15 @@ wc_t* wc_create(char* fn, opts_t* opts)
 // fill out the wc_t struct from the given file fields should already be at 0
 // open the file to read, then close it when done
 // report any errors straight to stderr
-void wc_read(wc_t* count)
+void wc_read(wc_t* wc)
 {
   FILE* fd;
-
-  if(strcmp(count->fn, "-stdin-"))
-    fd = fopen(stdin, "r");
+  if(strcmp(wc->fn, "-stdin-") == 0)
+    fd = stdin;
   else
-    fd = fopen(count->fn, "r");
+    fd = fopen(wc->fn, "r");
   
-  char cur;
+  char prev=' ', cur;
   int saw_space = 0;
   while((cur = fgetc(fd)) != EOF)
   {
@@ -111,24 +129,25 @@ void wc_read(wc_t* count)
     if(cur == '\n')
     {
       wc->lines++;
-      continue;
     }
 
     // check for spaces
-    if(cur == ' ' && !saw_space) 
+    if(!isspace(prev) && isspace(cur)) 
     {
-      wc->word++;
-      saw_space = 1;
+      wc->words++;
     }
-    else if(cur != ' ' && saw_space)
-    {
-      saw_space = 0;
-    }
-
+    
     wc->chars++;
+
+    prev = cur;
   }
 
-  fclose(fd);
+  // end of file no space but was a word
+  if(!isspace(prev))
+    wc->words++;
+
+  if(strcmp(wc->fn, "-stdin-") != 0)
+    fclose(fd);
 }
 
 // output in the form:
@@ -138,10 +157,10 @@ void wc_output(wc_t* wc)
   printf("%s", wc->fn);
 
   if(wc->opts->lines)
-    printf(" %d", wc->line);
+    printf(" %d", wc->lines);
 
   if(wc->opts->words)
-    printf(" %d", wc->word);
+    printf(" %d", wc->words);
 
   if(wc->opts->chars)
     printf(" %d", wc->chars);
@@ -177,7 +196,6 @@ int validate(char* str)
   // could I open it?
   if(fd == NULL)
   { // no
-    fprintf(stderr, "ERROR: file \'%s\' cannot be opened\n", str);
     return 0;
   }
   
@@ -187,6 +205,86 @@ int validate(char* str)
 }
 
 // generate all of the wc_t's to run through and the opts to do so
-wc_t** wc_gen_from_args(int argc, char* argv[], opts_t* opts, int* num_wcs);
+wc_t** wc_gen_from_args(int argc, char* argv[], opts_t* opts, int* num_wcs)
+{
+  // create the options
+  opts = malloc(sizeof(*opts));
+  opts->options = 0;
+
+  // just go bold, but only make as many as needed (num_wcs)
+  wc_t** wcs = malloc(sizeof(wc_t*)*argc); 
+  *num_wcs = 0;  
+
+  // go through the args
+  int opt_count = 0;
+  for(int i = 1; i < argc; i++)
+  {
+    if(validate(argv[i]))
+    {
+      // good file to open
+      wcs[(*num_wcs)++] = wc_create(argv[i], opts);
+    }
+    else if(argv[i][0] == '-')
+    {
+      // see if it is a valid command and set the arguments accordingly
+      if(strlen(argv[i]) != 2)
+      {
+        fprintf(stderr, "ERROR: unknown option \'%s\'\n", argv[i]);
+   
+        wc_free(wcs, *num_wcs);
+   
+        exit(2);        
+      }
+
+      switch(argv[i][1])
+      {
+        case 'w':
+          opts->words = 1;
+          opt_count++;
+          break;
+        case 'l':
+          opts->lines = 1;
+          opt_count++;
+          break;
+        case 'c':
+          opts->chars = 1;
+          opt_count++;
+          break;
+        default:
+          fprintf(stderr, "ERROR: unkown option \'%s\'\n", argv[i]);
+          break;
+      }
+    }
+    else if(strcmp(argv[i], "+") == 0)
+    {
+      wcs[(*num_wcs)++] = wc_create("-stdin-", opts);
+    }
+    else
+    { // bad file (output that)
+      fprintf(stderr, "ERROR: file \'%s\' cannot be opened\n", argv[i]);
+    }
+  }
+
+  // default usage: "./wc <files>"
+  if(opt_count == 0)
+  {
+    opts->options = 14;
+  }
+
+  // "./wc"
+  if(argc == 1)
+  {
+    opts->options = 14;// max out the flags that matter
+    wcs[(*num_wcs)++] = wc_create("-stdin-", opts);
+  }
+ 
+  // "./wc <options> " 
+  if (opt_count > 0 && *num_wcs == 0)
+  {
+    wcs[(*num_wcs)++] = wc_create("-stdin-", opts);
+  }
+
+  return wcs;
+}
 
 
