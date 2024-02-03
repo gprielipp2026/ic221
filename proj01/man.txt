@@ -1,0 +1,31 @@
+WC(1)                                     User Commands                                                             WC(1)
+
+NAME
+  ./wc - prints line, word, or character counts for each file passed in
+
+SYNOPSIS
+  ./wc [OPTION] [FILE(S)]
+
+DESCRIPTIONS
+  Prints the number of lines, words, and characters in each FILE, and the total if more than one file is supplied.
+  If no files are provided, then ./wc defaults input to stdin. If FILE = '+', stdin will be used as input.
+  A word is a sequence of characters separated by whitespace.
+
+  Each <OPTION> must be whitespace separated and begin with a '-'.
+  The output is always in the order: <file> <lines> <words> <characters>
+  If there are options supplied, then only the options supplied will be seen in the output.
+
+  -l
+      print the number of lines
+
+  -w
+      print the number of words
+
+  -c 
+      print the number of characters
+    
+
+AUTHOR
+  Written by George Prielipp
+
+IC221                                     February 2024                                                             WC(1)
