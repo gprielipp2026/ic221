@@ -33,7 +33,8 @@ void dealloc(int n, mytype_t ** items){
 
   for(int i = 0; i < n; i++)
   {
-    if(items[i] != NULL) free(items[i]);
+    if(items[i] != NULL) 
+       free(items[i]);
   }
   free(items);
 
