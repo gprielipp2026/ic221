@@ -12,6 +12,6 @@ cat dickens.txt | ./wc -c -l A.txt + A.txt,A.txt 1 201961 -stdin- 19199 917028 A
 ./wc doesnotexist.txt 2> /dev/null,
 ./wc dickens.txt doesnotexist.txt dickens.txt,dickens.txt 19199 161007 917028 ERROR: file 'doesnotexist.txt' cannot be opened dickens.txt 19199 161007 917028 total 38398 322014 1834056
 ./wc dickens.txt doesnotexist.txt dickens.txt 2>/dev/null,dickens.txt 19199 161007 917028 dickens.txt 19199 161007 917028 total 38398 322014 1834056
-./wc -p dickens.txt,ERROR: unknown option '-p'
-./wc -p -l dickens.txt,ERROR: unknown option '-p'
-./wc -l -p dickens.txt,ERROR: unknown option '-p'
+./wc -p dickens.txt 2>1,ERROR: unknown option '-p'
+./wc -p -l dickens.txt 2>1,ERROR: unknown option '-p'
+./wc -l -p dickens.txt 2>1,ERROR: unknown option '-p'
