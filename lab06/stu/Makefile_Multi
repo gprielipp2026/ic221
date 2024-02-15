@@ -1,5 +1,23 @@
 # TODO 
 # - runme.c depends on library.c
 # - runme_too.c depend on library.c and fun.c
+CC=gcc
+CCFLAGS=-g -Wall
 
 
+all: runme runme_too
+	./runme
+	@echo ""
+	./runme_too
+
+%.o: %.c %.h
+	$(CC) $(CCFLAGS) -c $< -o $@
+
+runme: runme.o library.o
+	$(CC) $(CCFLAGS) $^ -o $@
+
+runme_too: runme_too.o library.o fun.o
+	$(CC) $(CCFLAGS) $^ -o $@
+
+clean:
+	$(RM) $(RF) *.o runme runme_too
