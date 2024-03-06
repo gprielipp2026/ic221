@@ -1,1 +1,12 @@
 #TODO
+CCFLAGS=-g -Wall
+CC=gcc
+
+all: compileme
+	./compileme
+
+compileme: compileme.c
+	$(CC) $(CCFLAGS) $^ -o $@
+
+clean:
+	$(RM) $(RF) compileme
