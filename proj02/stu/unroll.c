@@ -66,24 +66,30 @@ int main(int argc, char * argv[]){
 			
 			// I am a child process!
 			// TODO: Set my PGID to the value saved in 'pgroup'
-
+                        if(setpgid(0, pgroup) == -1)
+                        {
+                          perror("setpgid(pgroup) failed\n");
+                        }
 			
 			// TODO: execute the command with execvp()
 			//   The command itself is pipeline[i][0]
 			//   The full argv array pointer is pipeline[i]
 			//   If execvp fails, raise error and exit
+//                        for(int shift = 0; (pipeline[i] + shift) != NULL; shift++)
+//                          printf("%d: %p\t%s\n", shift, pipeline[i]+shift, pipeline[i][shift]);
 
-
-
+                        execvp(pipeline[i][0], pipeline[i]);
+                        fprintf(stderr, "execvp failed in child(%d)\n", getpid());
+                        exit(1);
 		} else if (cpid > 0) {
 			
 			// I am the parent process!
 			if (i == 0) { // if first child:
 				
 				// TODO: set 1st child process PGID to match its own PID
-					
+		                setpgid(cpid, cpid);			
 				// TODO: save 1st child's PGID in 'pgroup' 			
-
+                                pgroup = cpid;
 			}
 
 		} else {
