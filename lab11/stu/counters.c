@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <pthread.h>
 
-#define NTHREADS 50
+#define NTHREADS 10
 void *thread_function(void *);
 
 int counter = 0;
@@ -42,8 +42,8 @@ void *thread_function(void * t_num)
     printf("Thread number %d, id: %ld\n", thread_num, pthread_self());
     counter++;
     
-    if (thread_num == 7) {
-      printf("Lucky number 7! Press enter to continue...\n");
-      getchar();
-    } 
+    /*if (thread_num == 7) {*/
+    /*printf("Lucky number 7! Press enter to continue...\n");*/
+    /*getchar();*/
+    /*} */
 }

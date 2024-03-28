@@ -89,7 +89,7 @@ void * crack_hashes(void * arg) {
         if (strncmp(digest,hash_string,DIGEST_LENGTH-1) == 0) {
           printf("Thread %d\tMatch: %s\t%s\n", thread_num, test_password, digest);
           cracked = 0;
-          cracked_status[next_uncracked_digest_index] = 0;
+          /*cracked_status[next_uncracked_digest_index] = 0;*/
         }
         else { increment(test_password); }
 
