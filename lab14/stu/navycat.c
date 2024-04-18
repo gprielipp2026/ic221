@@ -33,8 +33,9 @@ void * sender() {
 	//   it and send it to the socket
 	//   Use 's' to count bytes to send
   // Exit if there is a write error
-  while( (r = read(0, in_buf, BUF_SIZE)) > 0 ){
-    if( write(sock, in_buf, r) < 0 ){
+  while( (r = read(0, out_buf, BUF_SIZE-1)) > 0 ){
+    out_buf[r] = '\0';
+    if( write(sock, out_buf, r) < 0 ){
       perror("sender");
       exit(1);
     }
@@ -46,7 +47,8 @@ void * receiver() {
   //   it and send it to stdout
   //   Use 'r' to count bytes read
   // Exit if there is a write error
-  while( (s = read(sock, in_buf, BUF_SIZE)) > 0 ){
+  while( (s = read(sock, in_buf, BUF_SIZE-1)) > 0 ){
+    in_buf[s] = '\0';
     if( write(1, in_buf, s) < 0 ){
       perror("receiver");
       exit(1);
@@ -73,12 +75,12 @@ int main(int argc, char * argv[]){
   // TODO: Set up address resolution hints
   memset(&hints, 0, sizeof(struct addrinfo));
   hints.ai_family = AF_INET;
-  hints.ai_protocol = IPPROTO_TCP;
+  //hints.ai_protocol = IPPROTO_TCP;992
 
 
   // TODO: Use getaddrinfo() to resolve hostname.
   int ec;
-  if((ec = getaddrinfo(hostname, NULL, &hints, &result)) != 0)
+  if((ec = getaddrinfo(hostname, NULL, &hints, &result)))
   {
     fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(ec));
     exit(1);
@@ -88,6 +90,7 @@ int main(int argc, char * argv[]){
   // TODO: Properly set IP address and port in saddr
   saddr = (struct sockaddr_in*) result->ai_addr;
   saddr->sin_port = htons(port);
+  saddr->sin_family = AF_INET;
   printf("%s:%d\n", inet_ntoa(saddr->sin_addr), ntohs(saddr->sin_port));
   freeaddrinfo(result);
 
@@ -98,16 +101,14 @@ int main(int argc, char * argv[]){
     exit(1);
   } 
 
-
   printf("Socket fd(%d)\n", sock);
 
   // TODO: Connect the socket
-  if((ec = connect(sock, (struct sockaddr*)&saddr, sizeof(struct sockaddr))) < 0){
+  if((ec = connect(sock, (struct sockaddr*)saddr, sizeof(struct sockaddr_in))) < 0){
     fprintf(stderr, "connect: connection refused: %s\n", strerror(errno));
     close(sock);
     exit(1);
   }
-
 
   // TODO: Create the sender and receiver threads
   pthread_create(&send_thread, NULL, sender, NULL);
