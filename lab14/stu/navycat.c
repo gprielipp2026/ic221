@@ -91,7 +91,7 @@ int main(int argc, char * argv[]){
   saddr = (struct sockaddr_in*) result->ai_addr;
   saddr->sin_port = htons(port);
   saddr->sin_family = AF_INET;
-  printf("%s:%d\n", inet_ntoa(saddr->sin_addr), ntohs(saddr->sin_port));
+  //printf("%s:%d\n", inet_ntoa(saddr->sin_addr), ntohs(saddr->sin_port));
   freeaddrinfo(result);
 
   // TODO: Open the socket (sock)
@@ -101,7 +101,7 @@ int main(int argc, char * argv[]){
     exit(1);
   } 
 
-  printf("Socket fd(%d)\n", sock);
+  //printf("Socket fd(%d)\n", sock);
 
   // TODO: Connect the socket
   if((ec = connect(sock, (struct sockaddr*)saddr, sizeof(struct sockaddr_in))) < 0){
