@@ -104,6 +104,7 @@ int main(int argc, char * argv[]){
   // TODO: Connect the socket
   if((ec = connect(sock, (struct sockaddr*)&saddr, sizeof(struct sockaddr))) < 0){
     fprintf(stderr, "connect: connection refused: %s\n", strerror(errno));
+    close(sock);
     exit(1);
   }
 
