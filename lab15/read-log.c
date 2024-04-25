@@ -11,7 +11,7 @@ int main(int argc, char * argv[]){
     FILE * f_log; 
 
     // TODO: update to reflect your directory
-    char * path = "/courses/ic221/XXXX/mXXXXXX/log.txt";
+    char * path = "/courses/ic221/6541/m265112/log.txt";
 
     // Check arguments
     if (argc >= 2){

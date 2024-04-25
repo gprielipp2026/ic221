@@ -12,7 +12,7 @@ int main(int argc, char * argv[]){
     FILE * f_log;
 
     //TODO: update to reflect your directory
-    char * path = "/courses/ic221/XXXX/mXXXXXX/log.txt";
+    char * path = "/courses/ic221/6541/m265112/log.txt";
 
 
     // Check arguments
@@ -28,8 +28,13 @@ int main(int argc, char * argv[]){
         // TODO: Test if *Real* UID matches your own
         // (Hint: find your own UID with the 'id' shell command)
         // If they *don't* match, print an error message and exit
-
-
+        int myuid = 495044478;
+        int ruid = getuid();
+        if(ruid != myuid)
+        {
+          fprintf(stderr, "Invalid RUID\n");
+          exit(1);
+        }
 
         // Okay, they match.
         // Truncate the file (open it for writing, then close it).
